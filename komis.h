@@ -6,7 +6,7 @@
 
 class Komis {
 public:
-    vector<pojazdSilnikowy> plac;
+    vector<pojazdSilnikowy*> plac;
     explicit Komis(const string &nazwaKomisu=" ", double marza=0);
     void komisKupuje(pojazdSilnikowy *pojazd);
     Pojazd* komisSprzedaje(int nr, const string &wlasciciel);

@@ -7,14 +7,14 @@ Komis::Komis(const string &nazwaKomisu, double marza) : nazwaKomisu(nazwaKomisu)
 void Komis::komisKupuje(pojazdSilnikowy *pojazd) {
 
     pojazd->zmienWlasciciela(nazwaKomisu);
-    plac.push_back(*pojazd);
+    plac.push_back(pojazd);
     cout<<"\nKomis "<<nazwaKomisu<<" zakupil pojazd o nastepujacych parametrach: \n";
-    plac[plac.size()-1].wypiszPojazd();
+    plac[plac.size()-1]->wypiszPojazd();
     cout<<"\nOtrzymujesz "<<cenaSkupu(pojazd)<<"zl. \nDo widzenia!\n";
 }
 
 Pojazd* Komis::komisSprzedaje(int nr, const string &wlasciciel) {
-    Pojazd* pojazd = &plac[nr];
+    Pojazd* pojazd = plac[nr];
     pojazd->zmienWlasciciela(wlasciciel);
     plac.erase(plac.begin()+nr);
     return pojazd;
@@ -25,7 +25,7 @@ void Komis::wypiszPlac() {
 for (int i=0; i<plac.size(); i++)
 {
     cout<<"\n\nMiejsce "<<i+1<<":\n";
-    plac[i].wypiszPojazd();
+    plac[i]->wypiszPojazd();
     cout<<"\n_________CENA: "<<cenaSprzedazy(&plac[i])<<"_________";
 }
 cout<<"\n------------------------\n";
