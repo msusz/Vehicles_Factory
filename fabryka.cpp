@@ -1,69 +1,69 @@
 
-#include "fabryka.h"
+#include "factory.h"
 #include <iostream>
 
 using namespace std;
 
-Pojazd* Fabryka::sprzedaj(string nowyWlasciciel, int nr) {
+Vehicle* Factory::sell(string newOwner, int nr) {
 
-    Pojazd *pojazd=this->tablica[nr];   //zapisanie pojazdu z tablicy
-    pojazd->zmienWlasciciela(nowyWlasciciel);   //zmiana wlasciciela
-    //teraz trzeba usunac samochod z tablicy fabryki i przesunac pozostale samochody na wczesniejsze pozycje:
-    for(int i=nr; i<ilePojazdow; i++)
+    Vehicle *vehicle=this->array[nr];
+    vehicle->changeOwner(newOwner);
+    //delating vehicle from the factory:
+    for(int i=nr; i<nVehicles; i++)
     {
-        tablica[i]=tablica[i+1];
+        array[i]=array[i+1];
     }
-    ilePojazdow--;
-    return pojazd;
+    nVehicles--;
+    return vehicle;
 }
 
 
-void Fabryka::wypiszPojazdy() {
-    if(!ilePojazdow)
-        cout<<"! TA FABRYKA JEST PUSTA !\n";
+void Factory::listVehicles() {
+    if(!nVehicles)
+        cout<<"! THIS FACTORY IS EMPTY !\n";
     else {
-        for (int i = 0; i < this->ilePojazdow; i++) {
-            cout << "\nPojazd " << i + 1 << ": ";
-            tablica[i]->wypiszPojazd();
+        for (int i = 0; i < this->nVehicles; i++) {
+            cout << "\nVehicle " << i + 1 << ": ";
+            array[i]->printVehicle();
         }
     }
 }
 
-Pojazd* Fabryka::wybierzPojazd(int nr) {
-    return this->tablica[nr];
+Vehicle* Factory::chooseVehicle(int nr) {
+    return this->array[nr];
 }
 
-Fabryka::Fabryka(const string &marka, int ladownoscMotocykl, int ladownoscSamochod):
-marka(marka), ladownoscMotocykl(ladownoscMotocykl), ladownoscSamochod(ladownoscSamochod) {
-for(int i=0; i<POJEMNOSC_FABRYKI; i++)
-    this->tablica[i]=nullptr;
-this->ilePojazdow=0;
+Factory::Factory(const string &brand, int motorcycleCapacity, int carCapacity):
+brand(brand), motorcycleCapacity(motorcycleCapacity), carCapacity(carCapacity) {
+for(int i=0; i<FACTORY_CAPACITY; i++)
+    this->array[i]=nullptr;
+this->nVehicles=0;
 }
 
-string Fabryka::jakaMarka() {
-    return this->marka;
+string Factory::whatBrand() {
+    return this->brand;
 }
 
 
-//__________________FUNKCJE TWORZACE NOWE POJAZDY____________________
-void Fabryka::nowySamochod(int drzwi, const string &kolor) {
+//__________________FUNCTIONS FOR CREATING NEW VEHICLES____________________
+void Factory::newCar(int doors, const string &color) {
 
-    Samochod* samochod=new Samochod(ladownoscSamochod, drzwi, marka, kolor, SPALANIE_S);
-    samochod->ustalMarke(this->marka);
-    tablica[this->ilePojazdow]=samochod;
-    this->ilePojazdow++;
+    Car* car=new Car(carCapacity, doors, brand, color, FUEL_CAR);
+    car->setBrand(this->brand);
+    array[this->nVehicles]=car;
+    this->nVehicles++;
 }
 
-void Fabryka::nowyMotocykl(const string &kolor) {
-    Motocykl* motocykl = new Motocykl(this->ladownoscMotocykl, kolor, this->marka, SPALANIE_M);
-    motocykl->ustalMarke(this->marka);
-    tablica[this->ilePojazdow]=motocykl;
-    this->ilePojazdow++;
+void Factory::newMotorcycle(const string &color) {
+    Motorcycle* motorcycle = new Motorcycle(this->motorcycleCapacity, color, this->brand, FUEL_MOTORCYCLE);
+    motorcycle->setBrand(this->brand);
+    array[this->nVehicles]=motorcycle;
+    this->nVehicles++;
 }
 
-void Fabryka::nowyRower(const string &kolor, bool koszyk) {
-    Rower* rower = new Rower(kolor, koszyk);
-    rower->ustalMarke(this->marka);
-    tablica[this->ilePojazdow]=rower;
-    this->ilePojazdow++;
+void Factory::newBicycle(const string &color, bool basket) {
+    Bicycle* bicycle = new Bicycle(color, basket);
+    bicycle->setBrand(this->brand);
+    array[this->nVehicles]=bicycle;
+    this->nVehicles++;
 }
