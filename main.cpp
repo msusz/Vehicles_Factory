@@ -1,201 +1,200 @@
 #include <iostream>
 #include <fstream>
 #include <thread>
-#include "samochod.h"
-#include "fabryka.h"
-#include "komis.h"
-#include "lakiernik.h"
-#include "wyjatki.h"
+#include "car.h"
+#include "factory.h"
+#include "comission.h"
+#include "varnisher.h"
+#include "exceptions.h"
 
 using namespace std;
 
-#define MAX_FABRYK 5
-#define MAX_SPRZEDANYCH 100
+#define MAX_FACTORIES 5
+#define MAX_SOLD 100
 
-//funkcje obslugujace opcje z menu glownego:
-void WypiszFabryki(Fabryka** koncern, const int *iloscFabryk);
-void NowaFabryka(Fabryka** koncern, int *iloscFabryk);
-void ListaPojazdow(Fabryka** koncern, int iloscFabryk);
-void NowyPojazd(Fabryka** koncern, int iloscFabryk);
-void Sprzedaj(Fabryka** koncern, int iloscFabryk, Pojazd** sprzedane, int* iloscSprzedanych);
-void JedzPojazdem(Fabryka** koncern, int iloscFabryk);
-void ZmienKolor(Fabryka** koncern, int iloscFabryk, Lakiernik* lakiernik);
-void KupZKomisu(Komis* komis, Pojazd** sprzedane, int* iloscSprzedanych);
-void SprzedajDoKomisu(Komis* komis, Pojazd** sprzedane, int* iloscSprzedanych);
+//main menu:
+void PrintFactories(Factory** consortium, const int *nFactories);
+void NewFactories(Fabryka** consortium, int *nFactories);
+void ListVehicles(Fabryka** consortium, int nFactories);
+void NewVehicle(Fabryka** consortium, int nFactories);
+void Sell(Fabryka** consortium, int nFactories, Pojazd** sold, int* nSold);
+void Drive(Fabryka** consortium, int nFactories);
+void ChangeColor(Fabryka** consortium, int nFactories, Lakiernik* lakiernik);
+void BuyFromComission(Comission* comission, Pojazd** sold, int* nSold);
+void SellToComission(Comission* comission, Pojazd** sold, int* nSold);
 
-//funkcje do wybierania konkretnej fabryki i samochodu:
-Fabryka* wybierzFabryke(Fabryka** koncern, int iloscFabryk);
-int wybierzPojazd(Fabryka fabryka);
+//choosing a vehicle:
+Factory* chooseFactory(Factory** consortium, int nFactories);
+int choseVehicle(Factory factory);
 
-//funkcje tworzace nowe pojazdy
-void NowySamochod(Fabryka** koncern, int nr);
-void NowyMotocykl(Fabryka** koncern, int nr);
-void NowyRower(Fabryka** koncern, int nr);
+//creating vehicles:
+void NewCar(Factory** consortium, int nr);
+void NewMotorcycle(Factory** consortium, int nr);
+void NewBicycle(Factory** consortium, int nr);
 
-//funkcje wczytujace
-template <typename T> T wczytaj(bool t);
-string wczytaj(bool t);
+//input:
+template <typename T> T read(bool t);
+string read(bool t);
 
-
-template<typename T> void Dopisz(T* t, T** tab, int *tabSize) {
+template<typename T> void Add(T* t, T** tab, int *tabSize) {
     tab[*tabSize]=t;
     (*tabSize)++;
 }
 
-ifstream *plikTestowy;
+//file handling
+ifstream *textFile;
 bool test = false;
 
 //----------------------------------------------------------------------------------------------------------------------
 int main(int argc, char* argv[])
 {
-    plikTestowy = new ifstream();
+    textFile = new ifstream();
     if (argc > 1) {
-        cout<<"\nTERAZ TESTUJEMY - wartosci beda wczytywane z pliku "<< argv[argc-1] << endl;
-        plikTestowy->open(argv[1]);
-        if(plikTestowy->is_open()) {
-            cout<<"\nUdalo sie otworzyc plik testowy\n\n";
+        cout<<"\nTESTING - values are read from a text file "<< argv[argc-1] << endl;
+        textFile->open(argv[1]);
+        if(textFile->is_open()) {
+            cout<<"\nText file was successfully opened\n\n";
             test = true;
         }
     }
 
-    //fabryki przechowywane sa w tablicy o dlugosci MAX_FABRYK,
-    //ilosc fabryk juz dodanych zapisana jest w zmiennej iloscFabryk
-    Fabryka* koncern[MAX_FABRYK];
-    int iloscFabryk=0;
+    //factories are storedin an array with size defined by MAX_FACTORIES
+    Factory* consortium[MAX_FACTORIES];
+    int nFactories=0;
 
-    //analogicznie przechowywane sa sprzedane pojazdy:
-    Pojazd* sprzedane[MAX_SPRZEDANYCH];
-    int iloscSprzedanych = 0;
+    //an array for sold vehicles:
+    Vehicles* sold[MAX_SOLD];
+    int nSold = 0;
 
-    auto* lakiernik=new Lakiernik();
+    auto* varnisher=new Varnisher();
 
-    //----------------------------------------TWORZENIE KOMISU
-    cout<<"\n  Witaj w programie sluzacym do zarzadzania pojazdami!\n"
-          "Uzywane samochody maga byc skupowane oraz sprzedawane przez komis.\n\n"
-          "Jak nazywa sie komis, z ktorego zamierzasz korzystac?\n>>";
-    string komisN = wczytaj(test);
-    cout<<"Jaka jest marza narzucana przez ten komis?\n>>";
-    auto marza = wczytaj<double>(test);
-    while(marza<0||marza>100000)
+    //----------------------------------------CREATING COMISSION
+    cout<<"\n Welcome to the Vehicle Management app!\n"
+          "Used cars can be bought and sold by a commission.\n\n"
+          "What is your comissions name?\n>>";
+    string comissionN = read(test);
+    cout<<"What is your comissions margin?\n>>";
+    auto margin = read<double>(test);
+    while(margin<0||margin>100000)
     {
-        if(marza<0)
-            cout<<"\nPodana marza jest ujemna! Myslisz, ze komis doplaca do sprzedawanych samochodow?\n";
+        if(margin<0)
+            cout<<"\nThe specified margin is negative! Do you think that the commission surcharge for cars sold?\n";
         else
-            cout<<"\nTa marza jest za duza i godzi w zasady sprawiedliwego handlu!\n";
-        cout<<"Podaj poprawna marze\n>>";
-        marza = wczytaj<double>(test);
+            cout<<"\nThe specified margin is to big and violates the principles of fair trade!\n";
+        cout<<"Pass the right margin\n>>";
+        margin = read<double>(test);
     }
-    Komis komis(komisN, marza);
-    cout<<"\nUdalo sie stworzyc komis\n";
+    Comission comission(comissionN, margin);
+    cout<<"\nThe comission was successfully created\n";
     //-------------------------------------------------------
 
-    //menu glowne - podaje podstawowe mozliwosci wykonywane za pomoca odpowiednich funkcji
-    int nr=-1; //nr - numer czynnosci wybieranej przez uzytkownika w menu
-    while (nr!=0) {         //po wybraniu 0 program konczy swoje dzialanie
+    //main menu
+    int nr=-1; //nr - nr of activity
+    while (nr!=0) {         //0 ends the program
         cout << "\n\n___________________| MENU |___________________\n";
-        cout << "Chcesz zobaczyc liste marek? Wybierz 1\n"
-             << "Chcesz dodac nowa fabryke? Wybierz 2\n"
-             << "Chcesz zobaczyc liste pojazdow z ktorejs z fabryk? Wybierz 3\n"
-             << "Chcesz stworzyc nowy pojazd? Wybierz 4\n"
-             << "Chcesz sprzedac ktorys z pojazdow z fabryki? Wybierz 5\n"
-             << "Chcesz gdzies pojechac? Wybierz 6\n"
-             << "Chcesz zmienic kolor pojazdu? Wybierz 7\n"
-             << "Chcesz kupic pojazd z komisu? Wybierz 8\n"
-             << "Chcesz sprzedac pojazd do komisu? Wybierz 9\n"
-             << "Aby zakonczyc wybierz 0\n";
+        cout << "Do you want to see a list of factories? Choose 1\n"
+             << "Do you want to add a new factory? Choose 2\n"
+             << "Do you want to see vehicles from a factory? Choose 3\n"
+             << "Do you want to create new vehicle? Choose 4\n"
+             << "Do you want to buy a vehicle from a factory? Choose 5\n"
+             << "Do you want to do a test ride? Choose 6\n"
+             << "Do you want to change vehicles color? Choose 7\n"
+             << "Do you want to buy a vehicle from the comission? Choose 8\n"
+             << "Do you want to sell a vehicle to the comission? Choose 9\n"
+             << "To end the program choose 0\n";
         cout<<"______________________________________________\n\n";
-        cout<<"Twoj wybor:\n>>";
-        nr=wczytaj<int>(test);
+        cout<<"Your number of choice:\n>>";
+        nr=read<int>(test);
 
         switch (nr) {
             case 0:
                 break;
             case 1:
                 try {
-                    WypiszFabryki(koncern, &iloscFabryk);
+                    PrintFactories(consortium, &nFactories);
                 }
-                catch(BrakFabryk &bf) {
-                    cerr<<"Blad wypisywania fabryk: "<<bf.massage<<endl<<endl;
+                catch(NoFactories &bf) {
+                    cerr<<"Printing factories error: "<<bf.massage<<endl<<endl;
                     this_thread::sleep_for(1s);
                 }
                 break;
             case 2:
-                NowaFabryka(koncern, &iloscFabryk);
+                NewFactory(consortium, &nFactories);
                 break;
             case 3:
                 try {
-                    ListaPojazdow(koncern, iloscFabryk);
+                    PrintVehicles(consortium, nFactories);
                 }
-                catch(BrakFabryk &bf) {
-                    cerr<<"Blad wypisywania pojazdow: "<<bf.massage<<endl<<endl;
+                catch(NoFactories &bf) {
+                    cerr<<"Printing vehicles error: "<<bf.massage<<endl<<endl;
                     this_thread::sleep_for(1s);
                 }
-                catch(BrakPojazdow &bp) {
-                    cerr<<"Blad wypisywania pojazdow: "<<bp.massage<<endl<<endl;
+                catch(NoVehicles &bp) {
+                    cerr<<"Printing vehicles error: "<<bp.massage<<endl<<endl;
                     this_thread::sleep_for(1s);
                 }
                 break;
             case 4:
                 try {
-                    NowyPojazd(koncern, iloscFabryk);
+                    NewVehicle(consortium, nFactories);
                 }
-                catch(BrakFabryk &bf) {
-                  cerr<<"Blad dodawania pojazdu: "<<bf.massage<<endl<<endl;
+                catch(NoFactories &bf) {
+                  cerr<<"Creating vehicle error: "<<bf.massage<<endl<<endl;
                     this_thread::sleep_for(1s);
                 }
                 break;
             case 5:
-                Sprzedaj(koncern, iloscFabryk, sprzedane, &iloscSprzedanych);
+                Sell(consortium, nFactories, sold, &nSold);
                 break;
             case 6:
-                JedzPojazdem(koncern, iloscFabryk);
+                Drive(consortium, nFactories);
                 break;
             case 7:
-                ZmienKolor(koncern, iloscFabryk, lakiernik);
+                ChangeColor(consortium, nFactories, varnisher);
                 break;
             case 8:
                 try{
-                    KupZKomisu(&komis, sprzedane, &iloscSprzedanych);
+                    BuyFromComission(&comission, sold, &nSold);
                 }
-                catch(BrakPojazdow &bp) {
-                    cerr<<"Blad komisu: "<<bp.massage<<endl<<endl;
+                catch(NoVehicles &bp) {
+                    cerr<<"Comission error: "<<bp.massage<<endl<<endl;
                     this_thread::sleep_for(1s);
                 }
                 break;
             case 9:
-                SprzedajDoKomisu(&komis, sprzedane, &iloscSprzedanych);
+                SellToComiission(&comission, sold, &nSold);
                 break;
             default:
-                cout << "Niepoprawny wybor, sproboj jeszcze raz."<<endl;
+                cout << "Wrong choice, try again"<<endl;
         }
     }
 
 
     cout<<"\n\n______________________________________________";
-    cout<<"\nZakonczono korzystanie z programu. Milego dnia!\n";
+    cout<<"\nProgram is closing. Have a good day!\n";
     cout<<"______________________________________________\n";
 
     return 0;
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-// funkcje do pobierania danych
+// data input
 template <typename T>
-T wczytaj(bool t) {
-    T wartosc;
+T read(bool t) {
+    T value;
     if(t) {
-        *plikTestowy>>wartosc;
-        cout<<wartosc<<endl;
+        *textFile>>value;
+        cout<<value<<endl;
     }
-    else cin>>wartosc;
-    return wartosc;
+    else cin>>value;
+    return value;
 }
 
-string wczytaj(bool t) {
+string read(bool t) {
     string s;
     if(t) {
         while(s.empty())
-            getline(*plikTestowy, s, '\n');
+            getline(*textFile, s, '\n');
         cout<<s<<endl;
     }
     else {
@@ -206,91 +205,91 @@ string wczytaj(bool t) {
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-//funkcje do obslugi menu
-void WypiszFabryki(Fabryka** koncern, const int* iloscFabryk) {
-    if(*iloscFabryk==0)     //jezeli nie ma fabryk w koncernie, rzucany jest wyjątek
+// main menu functions
+void PrintFactories(Factory** consortium, const int* nFactory) {
+    if(*nFactory==0)
     {
-        throw BrakFabryk();
+        throw NoFactories();
     }
     else{
-    cout<<"\n_______________| LISTA FABRYK |_______________\n";
-    for (int i=0; i<(*iloscFabryk) ; i++)
+    cout<<"\n_______________| FACTORIES |_______________\n";
+    for (int i=0; i<(*nFactories) ; i++)
     {
-        cout << i+1 << ". "<<koncern[i]->jakaMarka()<<endl;
+        cout << i+1 << ". "<<consortium[i]->whatBrand()<<endl;
     }
     cout<<"______________________________________________\n";
     }
 }
 
-void NowaFabryka(Fabryka** koncern, int* iloscFabryk)
+void NewFactory(Factory** consortium, int* nFactories)
 {
-    if(*iloscFabryk<MAX_FABRYK) {
-        cout << "Podaj nazwe marki:\n>>";
-        string marka=wczytaj(test);
+    if(*nFactories<MAX_FACTORIES) {
+        cout << "New brand:\n>>";
+        string brand=read(test);
 
-        cout<<"Podaj ladownosc dla samochodow tej marki\n>>";
-        int ladownoscSamochod=wczytaj<int>(test);
-        while(ladownoscSamochod<50||ladownoscSamochod>500)
+        cout<<"What capacity do cars from this brand have?\n>>";
+        int carCapacity=read<int>(test);
+        while(carCapacity<50||carCapacity>500)
         {
-            cout<<"Podana ladownosc jest niepoprawna, podaj inna (pomiedzy 50 a 500 kg)\n>>";
-            ladownoscSamochod = wczytaj<int>(test);
+            cout<<"Your capacity is incorrect, choose between 50 and 500 kg\n>>";
+            carCapacity = read<int>(test);
         }
 
-        cout<<"Podaj ladownosc dla motocykli tej marki\n>>";
-        int ladownoscMotocykl = wczytaj<int>(test);
-        while(ladownoscMotocykl<0||ladownoscMotocykl>200)
+        cout<<"What capacity do motorcycles from this brand have?\n>>";
+        int motorcycleCapacity = read<int>(test);
+        while(motorcycleCapacity<0||motorcycleCapacity>200)
         {
-            cout<<"Podana ladownosc jest niepoprawna, podaj inna (pomiedzy 0 a 200 kg)\n>>";
-            ladownoscMotocykl = wczytaj<int>(test);
+            cout<<"Your capacity is incorrect, choose between 0 and 200 kg\n>>";
+            motorcycleCapacity = read<int>(test);
         }
 
-        auto *nowaFabryka = new Fabryka(marka, ladownoscMotocykl, ladownoscSamochod);
+        auto *newFactory = new Factory(brand, motorcycleCapacity, carCapacity);
 
-        Dopisz(nowaFabryka, koncern, iloscFabryk);
+        Add(newFactory, consortium, nFactories);
 
-        cout << "\nUtworzono nowa fabryke.\n";
-        //(*iloscFabryk)++;
-        cout<<"Aktualna lista fabryk:\n";
-        WypiszFabryki(koncern, iloscFabryk);
+        cout << "\nA new factory was created.\n";
+
+        cout<<"Updated list of factories:\n";
+        PrintFactories(consortium, nFactories);
     }
     else {
-        cout<<"\nNie mozesz dodac wiecej fabryk (maksymalna ilosc fabryk wynosi "<<MAX_FABRYK<<").\n";
+        cout<<"\nYou can't create more factories (the maximum number of factories is "<<MAX_FACTORIES<<").\n";
     }
 }
 
-void ListaPojazdow(Fabryka** koncern, int iloscFabryk)
+void PrintVehicles(Factory** consortium, int nFactories)
 {
-    WypiszFabryki(koncern, &iloscFabryk);
-    cout<<"\nZ ktorej fabryki wypisac pojazdy?\n";      //wypisanie listy fabryk do wyboru, w przypadu ich braku daje mozliwosc dodania nowej
-    cout<<"Podaj numer fabryki: \n>>";
-    int nr = wczytaj<int>(test);
-    while(nr-1<0||nr-1>iloscFabryk)
+    PrintFactories(consortium, &nFactories);
+    cout<<"\nVehicles from which factory do you want to see?\n";
+    cout<<"Write a number of chosen factory: \n>>";
+    int nr = read<int>(test);
+    while(nr-1<0||nr-1>nFactories)
     {
-        cout<<"\nPodana bledna wartosc, wybierz liczbe od 1 do "<<iloscFabryk<<"\n>>";
-        nr = wczytaj<int>(test);
+        cout<<"\nWrong value, choose a number between 1 and "<<nFactories<<"\n>>";
+        nr = read<int>(test);
     }
-    if(koncern[nr-1]->ilePojazdow==0)
+    if(consortium[nr-1]->nVehicles==0)
     {
-        throw BrakPojazdow();
+        throw NoVehicles();
     }
     else
     {
-        cout<<"\n______________| LISTA POJAZDOW |______________\n";
-        koncern[nr-1]->wypiszPojazdy();             //wypisanie pojazdow przy pomocy metody z fabryki
+        cout<<"\n______________| VEHICLES |______________\n";
+        consortium[nr-1]->printVehicles();
         cout<<"\n______________________________________________\n";
     }
 }
 
-void NowyPojazd(Fabryka** koncern, int iloscFabryk)
+void NewVehicle(Factory** consortium, int nFactories)
 {
-    WypiszFabryki(koncern, &iloscFabryk);
-    cout<<"\nDo ktorej fabryki chcesz dodac pojazd?\n";
-    cout<<"Podaj numer fabryki:\n>>";
-    int nr = wczytaj<int>(test);
-    while(nr-1<0||nr>iloscFabryk)
+    PrintFactories(consortium, &nFactories);
+    cout<<"\nIn which factory do you want to create a vehicle?\n";
+    cout<<"Write a number of chosen factory:";
+    int nr = read<int>(test);
+    while(nr-1<0||nr>nFactories)
     {
-        cout<<"\nPodana bledna wartosc, wybierz liczbe od 1 do "<<iloscFabryk<<"\n>>";
-        nr = wczytaj<int>(test);
+        cout<<"\nWrong value, choose a number between 1 and "<<iloscFabryk<<"\n>>";
+        nr = read<int>(test);
     }
     cout<<"\nJaki rodzaj pojazdu chcesz wyprodukowac?\nSamochod - Wybierz 1\nMotocykl - Wybierz 2\nRower - Wybierz 3\n"
           "To pomylka, nie chcesz produkowac nic - Wybierz 0\n>>";
@@ -316,13 +315,13 @@ void NowyPojazd(Fabryka** koncern, int iloscFabryk)
             cout<<"\nBledna wartosc\n";
         }
 
-    cout<<"Do fabryki "<<koncern[nr-1]->jakaMarka()<<" dodano nowy pojazd.\n";
+    cout<<"Do fabryki "<<consortium[nr-1]->jakaMarka()<<" dodano nowy pojazd.\n";
     cout<<"______________________________________________\n";
 }
 
-void Sprzedaj(Fabryka** koncern, int iloscFabryk, Pojazd** sprzedane, int* iloscSprzedanych)
+void Sprzedaj(Fabryka** consortium, int iloscFabryk, Pojazd** sprzedane, int* iloscSprzedanych)
 {
-    Fabryka* fabryka = wybierzFabryke(koncern, iloscFabryk);
+    Fabryka* fabryka = wybierzFabryke(consortium, iloscFabryk);
     int pojazdNr = wybierzPojazd(*fabryka);
 
     cout<<"Podaj nowego wlasciciela: \n>>";
@@ -332,16 +331,16 @@ void Sprzedaj(Fabryka** koncern, int iloscFabryk, Pojazd** sprzedane, int* ilosc
     cout<<"\nPojazd zostal sprzedany\n";
 }
 
-void JedzPojazdem(Fabryka** koncern, int iloscFabryk)
+void JedzPojazdem(Fabryka** consortium, int iloscFabryk)
 {
     cout<<"\nPodaj dlugosc trasy:\n>>";
     int trasa = wczytaj<int>(test);
-    Fabryka* fabryka=wybierzFabryke(koncern, iloscFabryk);  //wybor fabryki z listy
+    Fabryka* fabryka=wybierzFabryke(consortium, iloscFabryk);  //wybor fabryki z listy
     Pojazd* pojazd=fabryka->wybierzPojazd(wybierzPojazd(*fabryka)); //wybor pojazdu z fabryki
     pojazd->jedz(trasa);
 }
 
-void ZmienKolor(Fabryka** koncern, int iloscFabryk, Lakiernik* lakiernik)
+void ZmienKolor(Fabryka** consortium, int iloscFabryk, Lakiernik* lakiernik)
 {
     cout<<"\nWitaj, jestes u lakiernika!\nJaki kolor ma miec Twoj pojazd?\n>>";
     string nowyKolor = wczytaj(test);
