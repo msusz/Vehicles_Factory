@@ -14,14 +14,14 @@ using namespace std;
 
 //main menu:
 void PrintFactories(Factory** consortium, const int *nFactories);
-void NewFactories(Fabryka** consortium, int *nFactories);
-void ListVehicles(Fabryka** consortium, int nFactories);
-void NewVehicle(Fabryka** consortium, int nFactories);
-void Sell(Fabryka** consortium, int nFactories, Pojazd** sold, int* nSold);
-void Drive(Fabryka** consortium, int nFactories);
-void ChangeColor(Fabryka** consortium, int nFactories, Lakiernik* lakiernik);
-void BuyFromComission(Comission* comission, Pojazd** sold, int* nSold);
-void SellToComission(Comission* comission, Pojazd** sold, int* nSold);
+void NewFactories(Factory** consortium, int *nFactories);
+void ListVehicles(Factory** consortium, int nFactories);
+void NewVehicle(Factory** consortium, int nFactories);
+void Sell(Factory** consortium, int nFactories, Vehicle** sold, int* nSold);
+void Drive(Factory** consortium, int nFactories);
+void ChangeColor(Factory** consortium, int nFactories, Vanisher* vanisher);
+void BuyFromComission(Comission* comission, Vehicle** sold, int* nSold);
+void SellToComission(Comission* comission, Vehicle** sold, int* nSold);
 
 //choosing a vehicle:
 Factory* chooseFactory(Factory** consortium, int nFactories);
@@ -288,180 +288,180 @@ void NewVehicle(Factory** consortium, int nFactories)
     int nr = read<int>(test);
     while(nr-1<0||nr>nFactories)
     {
-        cout<<"\nWrong value, choose a number between 1 and "<<iloscFabryk<<"\n>>";
+        cout<<"\nWrong value, choose a number between 1 and "<<nFactories<<"\n>>";
         nr = read<int>(test);
     }
-    cout<<"\nJaki rodzaj pojazdu chcesz wyprodukowac?\nSamochod - Wybierz 1\nMotocykl - Wybierz 2\nRower - Wybierz 3\n"
-          "To pomylka, nie chcesz produkowac nic - Wybierz 0\n>>";
-    int wybor=wczytaj<int>(test);
+    cout<<"\nWhat kind of vehicle do you want to create?\nCar - choose 1\nMotorcycle - choose 2\nBicycle - choose 3\n"
+          "You changed your mind and don't want to create any vehicle - choose 0\n>>";
+    int choice=read<int>(test);
 
-    while (wybor!=1&&wybor!=2&&wybor!=3)
+    while (choice!=1&&choice!=2&&choice!=3)
     {
-        cout<<"Podana bledna wartosc, wybierz liczbe od 1 do 3\n>>";
-        wybor=wczytaj<int>(test);
+        cout<<"You have chosen a wrong number, choose between 1 and 3\n>>";
+        choice=read<int>(test);
     }
 
-    switch (wybor) {
+    switch (choice) {
         case 1:
-            NowySamochod(koncern, nr);
+            NewCar( consortium, nr);
             break;
         case 2:
-            NowyMotocykl(koncern, nr);
+            NewMotorcycle( consortium, nr);
             break;
         case 3:
-            NowyRower(koncern, nr);
+            NewBicycle( consortium, nr);
             break;
         default:
-            cout<<"\nBledna wartosc\n";
+            cout<<"\nWrong value\n";
         }
 
-    cout<<"Do fabryki "<<consortium[nr-1]->jakaMarka()<<" dodano nowy pojazd.\n";
+    cout<<"Factory "<<consortium[nr-1]->whatBrand()<<" has created a new vehicle.\n";
     cout<<"______________________________________________\n";
 }
 
-void Sprzedaj(Fabryka** consortium, int iloscFabryk, Pojazd** sprzedane, int* iloscSprzedanych)
+void Sell(Factory** consortium, int nFactories, Vehicle** sold, int* nSold)
 {
-    Fabryka* fabryka = wybierzFabryke(consortium, iloscFabryk);
-    int pojazdNr = wybierzPojazd(*fabryka);
+    Factory* factory = chooseFactory(consortium, nFactories);
+    int nVehicle = chooseVehicle(*factory);
 
-    cout<<"Podaj nowego wlasciciela: \n>>";
-    string wlasciciel=wczytaj(test);
+    cout<<"New owner: \n>>";
+    string owner=read(test);
 
-    Dopisz(fabryka->sprzedaj(wlasciciel, pojazdNr), sprzedane, iloscSprzedanych);
-    cout<<"\nPojazd zostal sprzedany\n";
+    Add(factory->sell(owner, nVehicle), sold, nSold);
+    cout<<"\nThe vehicle has been sold.\n";
 }
 
-void JedzPojazdem(Fabryka** consortium, int iloscFabryk)
+void Drive(Factory** consortium, int nFactories)
 {
-    cout<<"\nPodaj dlugosc trasy:\n>>";
-    int trasa = wczytaj<int>(test);
-    Fabryka* fabryka=wybierzFabryke(consortium, iloscFabryk);  //wybor fabryki z listy
-    Pojazd* pojazd=fabryka->wybierzPojazd(wybierzPojazd(*fabryka)); //wybor pojazdu z fabryki
-    pojazd->jedz(trasa);
+    cout<<"\nWhat is your route length:\n>>";
+    int route = read<int>(test);
+    Factory* factory=chooseFactory(consortium, nFactories);  //wybor fabryki z listy
+    Vehicle* vehicle=factory->chooseVehicle(chooseVehicle(*factory)); //wybor pojazdu z fabryki
+    vehicle->drive(route);
 }
 
-void ZmienKolor(Fabryka** consortium, int iloscFabryk, Lakiernik* lakiernik)
+void ChangeColor(Factory** consortium, int nFactories, Varnisher* varnisher)
 {
-    cout<<"\nWitaj, jestes u lakiernika!\nJaki kolor ma miec Twoj pojazd?\n>>";
-    string nowyKolor = wczytaj(test);
-    Fabryka* fabryka = wybierzFabryke(koncern, iloscFabryk);
-    lakiernik->lakieruj(fabryka->wybierzPojazd(wybierzPojazd(*fabryka)), nowyKolor);
+    cout<<"\nWelcome, you visited the varnisher.\nWhat color do you want your vehicle to be?\n>>";
+    string newColor = read(test);
+    Factory* factory = chooseFactory( consortium, nFactories);
+    varnisher->varnish(factory->chooseVehicle( chooseVehicle(*factory)), newColor);
 }
 
-void KupZKomisu(Komis *komis, Pojazd **sprzedane, int *iloscSprzedanych)
+void BuyFromComission(Comission *comission, Vehicle **sold, int *nSold)
 {
-    if(komis->plac.empty())
-        throw BrakPojazdow();
-    komis->wypiszPlac();
-    cout<<"\nKtory pojazd chcesz kupic? Podaj jego numer\n>>";
-    int nr=wczytaj<int>(test);
+    if(comission->square.empty())
+        throw NoVehicles();
+    comission->printSquare();
+    cout<<"\nWhich vehicle do you want to buy\n>>";
+    int nr=read<int>(test);
 
-    while(nr-1>komis->plac.size()||nr-1<0)
+    while(nr-1>comission->square.size()||nr-1<0)
     {
-        cout<<"Podano nieprawidlowy numer. Podaj numer z zakresu 1 - "<<komis->plac.size()<<"\n>>";
-        nr=wczytaj<int>(test);
+        cout<<"You have chosen a wrong number. Choose between 1 - "<<comission->square.size()<<"\n>>";
+        nr=read<int>(test);
     }
-    nr--;       //zmiana indeksowania (od 0)
-    cout<<"\nWybrales pojazd o parametrach: ";
-    komis->plac[nr].wypiszPojazd();
-    cout<<"\nJego cena wynosi "<<komis->cenaSprzedazy(&(komis->plac[nr]))<<"zl. Czy chcesz zakupic ten pojazd?\n"
-                                                                           "Tak - wybierz 1, NIE - wybierz 0\n>>";
-    bool transakcja = wczytaj<bool>(test);
-    if(transakcja)
+    nr--;
+    cout<<"\nYou have chosen a vehicle with parameters: ";
+    comission->square[nr].printVehicle();
+    cout<<"\nIt costs "<<comission->sellingPrice(&(comission->square[nr]))<<". Do you want to buy this vehicle?\n"
+                                                                           "Yes - choose 1, No - choose 0\n>>";
+    bool transaction = read<bool>(test);
+    if(transaction)
     {
-        cout<<"Podaj nowego wlasciciela:\n>>";
-        string wlasciciel = wczytaj(test);
-        Dopisz(komis->komisSprzedaje(nr, wlasciciel), sprzedane, iloscSprzedanych);
-        cout<<"\nKupiles pojazd. Szerokiej drogi!\n";
+        cout<<"New owner:\n>>";
+        string owner = read(test);
+        Add(comission->comissionSells(nr, owner), sold, nSold);
+        cout<<"\nYou have bought the vehicle.\n";
     }
     else
-        cout<<"\nZrezygnowales z zakupu pojazdu. Do widzenia!\n";
+        cout<<"\nYou have cancel the purchase.\n";
 
 }
 
-void SprzedajDoKomisu(Komis *komis, Pojazd **sprzedane, int *iloscSprzedanych)
+void SellToComission(Comission *comission, Vehicle **sold, int *nSold)
 {
-    if(*iloscSprzedanych>0) {
-        cout << "\nPojazdy do wyboru: \n";
-        for (int i = 0; i < *iloscSprzedanych; i++) {
-            cout << "\nPojazd " << i + 1 << ":\n";
-            sprzedane[i]->wypiszPojazd();
+    if(*nSold>0) {
+        cout << "\nAvialable vehicles: \n";
+        for (int i = 0; i < *nSold; i++) {
+            cout << "\Vehicle " << i + 1 << ":\n";
+            sold[i]->printVehicle();
         }
-        cout << "\nKtory pojazd chcesz sprzedac? Podaj numer:\n>>";
-        int nr = wczytaj<int>(test);
-        while(nr-1<0||nr-1>*iloscSprzedanych|| sprzedane[nr-1]->typPojazdu()=="rower")
+        cout << "\nWhich vehicle do you want to sell?\n>>";
+        int nr = read<int>(test);
+        while(nr-1<0||nr-1>*nSold|| sold[nr-1]->vehicleType()=="bicycle")
         {
-            cout<<"\nPodana wartosc jest bledna, wybierz pojazd od 1 do "<<*iloscSprzedanych<<
-            "\nWez pod uwage, ze komis nie skupuje rowerow.\n>>";
-            nr = wczytaj<int>(test);
+            cout<<"\nThis value is wrong, choose between 1 and "<<*nSold<<
+            "\nRemember, that the comission doesn't but bicycles.\n>>";
+            nr = read<int>(test);
         }
         nr--;       //zmiana indeksowania
-        komis->komisKupuje(dynamic_cast<pojazdSilnikowy *>(sprzedane[nr]));
-        sprzedane[nr] = nullptr;
-        for (int i = nr; i < *iloscSprzedanych; i++) {
-            sprzedane[i] = sprzedane[i + 1];
+        comission->comissionBuys(dynamic_cast<motorVehicle *>(sold[nr]));
+        sold[nr] = nullptr;
+        for (int i = nr; i < *nSold; i++) {
+            sold[i] = sold[i + 1];
         }
-        (*iloscSprzedanych)--;
+        (*nSold)--;
     }
     else
-        cout<<"\nBrak pojazdow do sprzedania\n";
+        cout<<"\nThere are no vehicles to sell.\n";
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-//funkcje do tworzenia nowych pojazdow
+//creating new vehicles
 
-void NowySamochod(Fabryka** koncern, int nr)
+void NewCar(Factory** consortium, int nr)
 {
-    cout<<"Ile Twoj samochod ma drzwi?\n>>";
-    int drzwi=wczytaj<int>(test);
-    while (drzwi<1||drzwi>6)
+    cout<<"How many doors has this car?\n>>";
+    int doors=read<int>(test);
+    while (doors<1||doors>6)
     {
-        cout<<"\nPodano bledna ilosc drzwi, sprobuj jeszcze raz (wybierz liczbe od 1 do 6)\n>>";
-        drzwi=wczytaj<int>(test);
+        cout<<"\nA car can't have that many doors! Choose between 1 and 6\n>>";
+        doors=read<int>(test);
     }
 
-    cout<<"Jaki ma kolor?\n>>";
-    string kolor = wczytaj(test);
-    koncern[nr-1]->nowySamochod(drzwi, kolor);
+    cout<<"What color does it have?\n>>";
+    string color = read(test);
+    consortium[nr-1]->newCar(doors, color);
 }
 
-void NowyMotocykl(Fabryka** koncern, int nr)
+void NewMotorcycle(Factory** consortium, int nr)
 {
-    cout<<"Jaki kolor ma Twoj motocykl?\n>>";
-    string kolor = wczytaj(test);
-    koncern[nr-1]->nowyMotocykl(kolor);
+    cout<<"What color does your motorcycle have?\n>>";
+    string color = read(test);
+    consortium[nr-1]->newMotorcycle(color);
 }
 
-void NowyRower(Fabryka** koncern, int nr)
+void NewBicycle(Factory** consortium, int nr)
 {
-    cout<<"Jaki kolor ma Twoj rower?\n>>";
-    string kolor = wczytaj(test);
-    cout<<"\nCzy ma koszyk?\nTAK - 1, NIE - 0\n>>";
-    bool koszyk = wczytaj<bool>(test);
-    koncern[nr-1]->nowyRower(kolor, koszyk);
+    cout<<"What color does your bicycle have?\n>>";
+    string color = read(test);
+    cout<<"\nDoes this bicycle have a basket?\nYes - 1, No - 0\n>>";
+    bool basket = read<bool>(test);
+    consortium[nr-1]->newBicycle(color, basket);
 }
 
 
 //----------------------------------------------------------------------------------------------------------------------
 //funkcje pomocnicze do funkcji menu
-Fabryka* wybierzFabryke(Fabryka** koncern, int iloscFabryk) {
-    WypiszFabryki(koncern, &iloscFabryk);
-    cout << "Z ktorej fabryki chcesz wybrac pojazd?\n";
-    cout << "Podaj numer fabryki:\n>>";
-    int nr = wczytaj<int>(test);
-    while(nr-1<0||nr-1>iloscFabryk)
+Factory* chooseFactory(Factory** consortium, int nFactories) {
+    PrintFactories( consortium, &nFactories);
+    cout << "From which factory do you want to choose a vehicle?\n";
+    cout << "Choose a factory number:\n>>";
+    int nr = read<int>(test);
+    while(nr-1<0||nr-1>nFactories)
     {
-        cout<<"Podana bledna wartosc, wybierz liczbe od 1 do "<<iloscFabryk<<"\n>>";
-        nr = wczytaj<int>(test);
+        cout<<"This value is wrong, choose between 1 and "<< nFactories <<"\n>>";
+        nr = read<int>(test);
     }
-    return koncern[nr-1];
+    return consortium[nr-1];
 }
 
-int wybierzPojazd(Fabryka fabryka)
+int chooseVehicle(Factory factory)
 {
-    cout<<"\n\nPojazdy w fabryce:\n";
-    fabryka.wypiszPojazdy();
-    cout<<"\nKtory pojazd z fabryki wybierasz?\n>>";
-    int nr = wczytaj<int>(test);
+    cout<<"\n\nVehicles in this factory:\n";
+    factory.printVehicles();
+    cout<<"\nWhich vehicle do you want to choose?\n>>";
+    int nr = read<int>(test);
     return nr-1;
 }

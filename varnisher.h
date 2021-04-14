@@ -1,6 +1,6 @@
 #ifndef SUSZCZYKMARCELINA_VARNISHER_H
 #define SUSZCZYKMARCELINA_VARNISHER_H
-#include "pojazd.h"
+#include "vehicle.h"
 
 class Varnisher {
 public:
