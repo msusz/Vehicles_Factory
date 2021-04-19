@@ -14,18 +14,18 @@ using namespace std;
 
 //main menu:
 void PrintFactories(Factory** consortium, const int *nFactories);
-void NewFactories(Factory** consortium, int *nFactories);
-void ListVehicles(Factory** consortium, int nFactories);
+void NewFactory(Factory** consortium, int *nFactories);
+void PrintVehicles( Factory** consortium, int nFactories );
 void NewVehicle(Factory** consortium, int nFactories);
 void Sell(Factory** consortium, int nFactories, Vehicle** sold, int* nSold);
 void Drive(Factory** consortium, int nFactories);
-void ChangeColor(Factory** consortium, int nFactories, Vanisher* vanisher);
+void ChangeColor(Factory** consortium, int nFactories, Varnisher* varnisher);
 void BuyFromComission(Comission* comission, Vehicle** sold, int* nSold);
 void SellToComission(Comission* comission, Vehicle** sold, int* nSold);
 
 //choosing a vehicle:
 Factory* chooseFactory(Factory** consortium, int nFactories);
-int choseVehicle(Factory factory);
+int chooseVehicle(Factory factory);
 
 //creating vehicles:
 void NewCar(Factory** consortium, int nr);
@@ -63,7 +63,7 @@ int main(int argc, char* argv[])
     int nFactories=0;
 
     //an array for sold vehicles:
-    Vehicles* sold[MAX_SOLD];
+    Vehicle* sold[MAX_SOLD];
     int nSold = 0;
 
     auto* varnisher=new Varnisher();
@@ -162,7 +162,7 @@ int main(int argc, char* argv[])
                 }
                 break;
             case 9:
-                SellToComiission(&comission, sold, &nSold);
+                SellToComission(&comission, sold, &nSold);
                 break;
             default:
                 cout << "Wrong choice, try again"<<endl;
@@ -213,7 +213,7 @@ void PrintFactories(Factory** consortium, const int* nFactory) {
     }
     else{
     cout<<"\n_______________| FACTORIES |_______________\n";
-    for (int i=0; i<(*nFactories) ; i++)
+    for (int i=0; i<(*nFactory) ; i++)
     {
         cout << i+1 << ". "<<consortium[i]->whatBrand()<<endl;
     }
@@ -275,7 +275,7 @@ void PrintVehicles(Factory** consortium, int nFactories)
     else
     {
         cout<<"\n______________| VEHICLES |______________\n";
-        consortium[nr-1]->printVehicles();
+        consortium[nr-1]->listVehicles();
         cout<<"\n______________________________________________\n";
     }
 }
@@ -363,7 +363,7 @@ void BuyFromComission(Comission *comission, Vehicle **sold, int *nSold)
     }
     nr--;
     cout<<"\nYou have chosen a vehicle with parameters: ";
-    comission->square[nr].printVehicle();
+    (comission->square[nr]).printVehicle();
     cout<<"\nIt costs "<<comission->sellingPrice(&(comission->square[nr]))<<". Do you want to buy this vehicle?\n"
                                                                            "Yes - choose 1, No - choose 0\n>>";
     bool transaction = read<bool>(test);
@@ -460,7 +460,7 @@ Factory* chooseFactory(Factory** consortium, int nFactories) {
 int chooseVehicle(Factory factory)
 {
     cout<<"\n\nVehicles in this factory:\n";
-    factory.printVehicles();
+    factory.listVehicles();
     cout<<"\nWhich vehicle do you want to choose?\n>>";
     int nr = read<int>(test);
     return nr-1;

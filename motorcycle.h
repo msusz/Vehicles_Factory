@@ -3,9 +3,9 @@
 
 #include "motorVehicle.h"
 
-#define FULL_TANT_M 10    //tank capacity: 10l
+#define FULL_TANK_M 10    //tank capacity: 10l
 
-class Motorcycle : public pojazdSilnikowy {
+class Motorcycle : public motorVehicle {
 public:
     Motorcycle(int capacity, const string &color, const string &brand, double fuel);
     void printVehicle();

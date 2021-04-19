@@ -4,12 +4,12 @@ Motorcycle::Motorcycle(int capacity, const string &color, const string &brand, d
     this->fuelQuantity = FULL_TANK_M;
 }
 
-void Motorcycle::Motorcycle() {
+void Motorcycle::printVehicle() {
     cout<<"\tMOTORCYCLE: "<<endl;
     motorVehicle::printVehicle();
     cout<<endl;
 }
 
-void MotoMotorcycle::drive(int route) {
+void Motorcycle::drive(int route) {
     motorVehicle::drive(route);
 }

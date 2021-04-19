@@ -10,7 +10,7 @@ Vehicle::Vehicle(const int capacity, string color, string brand) : capacity(capa
  this->owner="FACTORY";
 }
 
-void Vehicle::printOwner() {
+void Vehicle::printVehicle() {
     cout<<" Brand: "<<brand<<", Color: "<<color<<", Capacity: "<<capacity<<", Owner: "<<owner;
 }
 

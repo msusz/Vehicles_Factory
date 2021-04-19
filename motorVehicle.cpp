@@ -4,7 +4,7 @@ using namespace std;
 
 motorVehicle::motorVehicle(int capacity, const string &color, const string &brand, double fuel ) :
 Vehicle(capacity, color, brand), fuel(fuel) {
-this->mileage=0;
+this->milleage=0;
 this->fuelQuantity=0;
 }
 
@@ -30,7 +30,7 @@ void motorVehicle::drive(int route) {
 
 void motorVehicle::printVehicle() {
     Vehicle::printVehicle();
-    cout<<",\nFuel quantity: "<< fuelQuantity <<"l, Fuel consumption: "<<fuel<<"l per 100km,  Milleage: "<<przebieg;
+    cout<<",\nFuel quantity: "<< fuelQuantity <<"l, Fuel consumption: "<<fuel<<"l per 100km,  Milleage: "<<milleage;
 }
 
 string motorVehicle::vehicleType() {

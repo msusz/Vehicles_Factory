@@ -17,6 +17,6 @@ void Bicycle::drive(int route) {
           "If you have had enough energy, you have ridden "<<route<<"km.\n";
 }
 
-string Bicycle::typVehicleu() {
+string Bicycle::vehicleType() {
     return "bicycle";
 }
