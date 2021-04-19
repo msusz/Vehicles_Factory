@@ -1,23 +1,23 @@
-#ifndef PROJEKT1_SAMOCHOD_H
-#define PROJEKT1_SAMOCHOD_H
+#ifndef PROJEKT1_CAR_H
+#define PROJEKT1_CAR_H
 
 #include <string>
-#include "pojazdSilnikowy.h"
+#include "motorVehicle.h"
 using namespace std;
 
-#define PELEN_BAK 50    //pojemnosc baku: 50l
-#define SPALANIE_S 10   //spalanie dla samochodu
+#define FULL_TANK_C 50
+#define FUEL_CAR 10 
 
-class Samochod : public pojazdSilnikowy{
-    int drzwi;
+class Car : public motorVehicle{
+    int doors;
 
 
 public:
-    explicit Samochod (int ladownosc=0, int drzwi=0, const string &marka="", const string &kolor="", double spalanie=SPALANIE_S);  //konstruktor
-    void wypiszPojazd() override;
+    explicit Car (int capacity=0, int doors=0, const string &brand="", const string &color="", double fuel=FUEL_CAR);
+    void printVehicle() override;
 
-    void jedz(int trasa) override;
+    void drive(int route) override;
 };
 
 
-#endif //PROJEKT1_SAMOCHOD_H
+#endif //PROJEKT1_CAR_H

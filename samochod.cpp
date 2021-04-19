@@ -1,20 +1,20 @@
-#include "samochod.h"
+#include "car.h"
 #include <iostream>
 
 
-Samochod::Samochod(const int ladownosc, const int drzwi, const string &marka, const string &kolor, const double spalanie) : pojazdSilnikowy(ladownosc, kolor, marka, spalanie), drzwi(drzwi)
+Car::Car(const int capacity, const int doors, const string &brand, const string &color, const double fuel) : motorVehicle(capacity, color, brand, fuel), doors(doors)
 {
-    this->iloscPaliwa=PELEN_BAK;
+    this->fuelQuantity=FULL_TANK_C;
 }
 
-void Samochod::wypiszPojazd() {
-    cout<<"\tSAMOCHOD\n"<<"Ilosc drzwi: "<<drzwi<<", ";
-    pojazdSilnikowy::wypiszPojazd();
+void Car::printVehicle() {
+    cout<<"\nCAR\n"<<"Doors quantity: "<<doors<<", ";
+    motorVehicle::printVehicle();
     cout<<endl;
 }
 
-void Samochod::jedz(int trasa) {
-    pojazdSilnikowy::jedz(trasa);
+void Car::drive(int route) {
+    motorVehicle::drive(route);
 }
 
 
