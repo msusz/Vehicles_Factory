@@ -1,32 +1,32 @@
-KOMIS
+COMISSION
 123456
 -123
 1234
 1
 3
 2
-marka
+brand
 12345
 123
 89
 2
-inna marka
+different brand
 450
 70
 4
 2
 2
-zielony
+green
 4
 1
 2
-niebieski
+blue
 4
 1
 2
-bordowy
+red
 2
-nowa marka
+new brand
 780
 500
 300
@@ -34,12 +34,12 @@ nowa marka
 4
 2
 3
-ciemny niebieski
+dark blue
 1
 4
 2
 3
-srebrny
+silver
 0
 3
 2
@@ -47,12 +47,12 @@ srebrny
 3
 1
 5
-turkusowy
+white
 4
 3
 1
 6
-czarny
+black
 1
 2
 mazda
@@ -64,7 +64,7 @@ mazda
 4
 1
 3
-niebieski
+blue
 1
 3
 1
@@ -72,17 +72,17 @@ niebieski
 2
 1
 5
-zielony
+green
 4
 2
 1
 4
-srebrny
+black
 4
 2
 1
 6
-niebieski
+blue
 5
 1
 1
@@ -102,7 +102,7 @@ Jakub Kowalski
 1
 Jan Kwiatkowski
 7
-czarny
+black
 2
 1
 0
