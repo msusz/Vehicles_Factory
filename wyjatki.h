@@ -1,23 +1,21 @@
-#ifndef SUSZCZYKMARCELINA_ETAP3_WYJATKI_H
-#define SUSZCZYKMARCELINA_ETAP3_WYJATKI_H
+#ifndef SUSZCZYKMARCELINA_EXCEPTIONS_H
+#define SUSZCZYKMARCELINA_EXCEPTIONS_H
 
-struct BlednaZawartosc : exception {
+struct WrongContent : exception {
 
     std::string massage;
-    virtual const char* what() const noexcept  {return "BlednaZawartosc";}
-    explicit BlednaZawartosc(std::string msg) : massage(std::move(msg)) {}  //funkcja move przenosi string z jednego miejsca w inne,
-                                                                            //czyli w tym przypadku tresc argumentu msg jest przeniesiona
-                                                                            //do atrybutu massage
+    virtual const char* what() const noexcept  {return "WrongContent";}
+    explicit WrongContent(std::string msg) : massage(std::move(msg)) {}
 };
 
-struct BrakFabryk : public BlednaZawartosc {
-    const char* what() const noexcept override {return "BrakFabryk";}
-    explicit BrakFabryk() : BlednaZawartosc("Brak fabryk") {}
+struct NoFactories : public WrongContent {
+    const char* what() const noexcept override {return "NoFactories";}
+    explicit NoFactories() : WrongContent("No factories") {}
 };
 
-struct BrakPojazdow : public BlednaZawartosc {
-    const char* what() const noexcept override {return "BrakPojazdow";}
-    explicit BrakPojazdow () : BlednaZawartosc("Brak pojazdow") {}
+struct NoVehicles : public WrongContent {
+    const char* what() const noexcept override {return "NoVehicles";}
+    explicit NoVehicles() : WrongContent("No Vehicles") {}
 };
 
-#endif //SUSZCZYKMARCELINA_ETAP3_WYJATKI_H
+#endif //SUSZCZYKMARCELINA_EXCEPTIONS_H
