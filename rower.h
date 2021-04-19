@@ -1,17 +1,17 @@
-#ifndef SUSZCZYKMARCELINA_ETAP1_ROWER_H
-#define SUSZCZYKMARCELINA_ETAP1_ROWER_H
+ektór#ifndef SUSZCZYKMARCELINA_BICYCLE_H
+#define SUSZCZYKMARCELINA_BICYCLE_H
 
-#include "pojazd.h"
-#define LADOWNOSC_KOSZYKA 10
+#include "vehicle.h"
+#define BASKET_CAPACITY 10
 
-class Rower : public Pojazd {
-    bool koszyk;
+class Bicycle : public Vehicle {
+    bool basket;
 public:
-    explicit Rower(string kolor = "NIEZNANY", bool koszyk = false);
-    void wypiszPojazd();
-    void jedz(int trasa);
-    string typPojazdu() override;
+    explicit Bicycle(string color = "UNKNOWN", bool basket = false);
+    void printVehicle();
+    void drive(int route);
+    string vehicleType() override;
 };
 
 
-#endif //SUSZCZYKMARCELINA_ETAP1_ROWER_H
+#endif //SUSZCZYKMARCELINA_BICYCLE_H

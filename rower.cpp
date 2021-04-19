@@ -1,22 +1,22 @@
-#include "rower.h"
+#include "bicycle.h"
 
-Rower::Rower(string kolor, bool koszyk) : Pojazd(koszyk*LADOWNOSC_KOSZYKA, kolor), koszyk(koszyk)
+Bicycle::Bicycle(string color, bool basket) : Vehicle(basket*BASKET_CAPACITY, color), basket(basket)
 {}
 
-void Rower::wypiszPojazd() {
-    cout<<"ROWER:\n";
-    Pojazd::wypiszPojazd();
-    if(koszyk)
-        cout<<", Koszyk: TAK\n";
+void Bicycle::printVehicle() {
+    cout<<"BICYCLE:\n";
+    Vehicle::printVehicle();
+    if(basket)
+        cout<<", Basket: YES\n";
     else
-        cout<<", Koszyk: NIE\n";
+        cout<<", Basket: NO\n";
 }
 
-void Rower::jedz(int trasa) {
-    cout<<"\nJedziesz rowerem, nie musisz martwic sie o paliwo!\n"
-          "Jezeli masz dosc sil, przejedziesz nawet "<<trasa<<"km.\n";
+void Bicycle::drive(int route) {
+    cout<<"\nYou're riding a bike, you don't have to worry about fuel!\n"
+          "If you have had enough energy, you have ridden "<<route<<"km.\n";
 }
 
-string Rower::typPojazdu() {
-    return "rower";
+string Bicycle::typVehicleu() {
+    return "bicycle";
 }
